@@ -12,6 +12,9 @@ function App() {
           <Route exact path="/">
             <Login />
           </Route>
+          <Route path="/meals">
+            {/* Fazer pagina de comida */}
+          </Route>
         </Switch>
       </BrowserRouter>
     </div>
