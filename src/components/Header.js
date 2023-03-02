@@ -5,6 +5,7 @@ import searchIcon from '../images/searchIcon.svg';
 
 export default function Header() {
   const [pageName, setPageName] = useState('');
+  const [searchActive, setSearchActive] = useState(false);
   const location = useLocation();
   const history = useHistory();
   const { pathname } = location;
@@ -35,7 +36,12 @@ export default function Header() {
       </button>
       { !pathname.includes('profile') && !pathname.includes('done-recipes')
         && !pathname.includes('favorite-recipes') ? (
-          <img data-testid="search-top-btn" src={ searchIcon } alt="Search" />) : null}
+          <button onClick={ () => setSearchActive(!searchActive) }>
+            <img data-testid="search-top-btn" src={ searchIcon } alt="Search" />
+          </button>) : null}
+      { searchActive ? (
+        <input data-testid="search-input" type="text" />
+      ) : null}
       <h1 data-testid="page-title">
         { pageName }
       </h1>

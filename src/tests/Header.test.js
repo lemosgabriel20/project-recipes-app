@@ -69,4 +69,17 @@ describe('Testa tela de Header', () => {
     expect(doneTitle).toHaveTextContent('Done Recipes');
     expect(window.location.pathname).toBe('/done-recipes');
   });
+  test('Testa se o input de pesquisa aparece', () => {
+    const history = createMemoryHistory();
+    render(
+      <Router history={ history }>
+        <Meals />
+      </Router>,
+    );
+    const search = screen.getByTestId(searchId);
+    expect(search).toBeInTheDocument();
+    userEvent.click(search);
+    const input = screen.getByTestId('search-input');
+    expect(input).toBeInTheDocument();
+  });
 });
