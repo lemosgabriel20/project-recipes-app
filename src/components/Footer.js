@@ -2,13 +2,14 @@ import React from 'react';
 import { useHistory } from 'react-router-dom';
 import drinkIcon from '../images/drinkIcon.svg';
 import mealIcon from '../images/mealIcon.svg';
+import '../css/footer.css';
 
 export default function Footer() {
   const history = useHistory();
   return (
     <div
-      style={ { position: 'fixed' } }
       data-testid="footer"
+      className="footer"
     >
       <button onClick={ () => history.push('/drinks') }>
         <img
