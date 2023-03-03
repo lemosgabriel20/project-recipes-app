@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useLocation, useHistory } from 'react-router-dom';
 import profileImg from '../images/profileIcon.svg';
 import searchIcon from '../images/searchIcon.svg';
+import SearchBar from './SearchBar';
 
 export default function Header() {
   const [pageName, setPageName] = useState('');
@@ -40,7 +41,9 @@ export default function Header() {
             <img data-testid="search-top-btn" src={ searchIcon } alt="Search" />
           </button>) : null}
       { searchActive ? (
-        <input data-testid="search-input" type="text" />
+        <div>
+          <SearchBar />
+        </div>
       ) : null}
       <h1 data-testid="page-title">
         { pageName }
