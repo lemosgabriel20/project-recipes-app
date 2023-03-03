@@ -8,9 +8,22 @@ export default function Profile() {
   return (
     <div>
       <Header />
-      <button type="button" onClick={ () => history.push('/done-recipes') }>
+      <p data-testid="profile-email" />
+      <button
+        type="button"
+        data-testid="profile-done-btn"
+        onClick={ () => history.push('/done-recipes') }
+      >
         Done Recipes
       </button>
+      <button
+        type="button"
+        data-testid="profile-favorite-btn"
+        onClick={ () => history.push('/favorite-recipes') }
+      >
+        Favorite Recipes
+      </button>
+      <button type="button" data-testid="profile-logout-btn">Logout</button>
       <Footer />
     </div>
   );
