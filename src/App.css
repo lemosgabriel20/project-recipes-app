@@ -15,6 +15,10 @@
   max-height: 80vh;
 }
 
+.foodElements {
+  display: block;
+}
+
 /*
 #iceLeft {
   animation: clink .8s infinite ease;

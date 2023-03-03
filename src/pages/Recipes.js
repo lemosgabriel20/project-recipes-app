@@ -12,6 +12,7 @@ export default function Recipes() {
   const { pathname } = useLocation();
   const token = pathname.slice(1);
   const image = (token.includes('meals')) ? 'strMealThumb' : 'strDrinkThumb';
+  const id = (token.includes('meals')) ? 'idMeal' : 'idDrink';
   const name = (token.includes('meals')) ? 'strMeal' : 'strDrink';
   const web = (token.includes('meals')) ? 'themealdb' : 'thecocktaildb';
 
@@ -81,7 +82,12 @@ export default function Recipes() {
         genericRecipes.map((recipe, index) => {
           const key = index;
           return (
-            <div key={ key } data-testid={ `${index}-recipe-card` }>
+            <a
+              className="foodElements"
+              key={ key }
+              data-testid={ `${index}-recipe-card` }
+              href={ `/${token}/${recipe[id]}` }
+            >
               <img
                 data-testid={ `${index}-card-img` }
                 width="200px"
@@ -89,7 +95,7 @@ export default function Recipes() {
                 alt=""
               />
               <h4 data-testid={ `${index}-card-name` }>{ recipe[name] }</h4>
-            </div>
+            </a>
           );
         })
       ) : null }
