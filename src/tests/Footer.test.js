@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react';
 import { Router } from 'react-router-dom';
 import { createMemoryHistory } from 'history';
 import userEvent from '@testing-library/user-event';
-import Meals from '../pages/Meals';
+import Recipes from '../pages/Recipes';
 
 const mealsId = 'meals-bottom-btn';
 const drinksId = 'drinks-bottom-btn';
@@ -14,7 +14,7 @@ describe('Testa componente Footer', () => {
     const history = createMemoryHistory();
     render(
       <Router history={ history }>
-        <Meals />
+        <Recipes />
       </Router>,
     );
 
@@ -29,7 +29,7 @@ describe('Testa componente Footer', () => {
     const history = createMemoryHistory();
     render(
       <Router history={ history }>
-        <Meals />
+        <Recipes />
       </Router>,
     );
 
