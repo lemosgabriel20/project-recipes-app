@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react';
 import { Router } from 'react-router-dom';
 import { createMemoryHistory } from 'history';
 import userEvent from '@testing-library/user-event';
-import Meals from '../pages/Meals';
+import Recipes from '../pages/Recipes';
 import App from '../App';
 
 const profileId = 'profile-top-btn';
@@ -15,7 +15,7 @@ describe('Testa componente Header', () => {
     const history = createMemoryHistory();
     render(
       <Router history={ history }>
-        <Meals />
+        <Recipes />
       </Router>,
     );
     const profile = screen.getByTestId(profileId);
@@ -30,7 +30,7 @@ describe('Testa componente Header', () => {
     const history = createMemoryHistory();
     render(
       <Router history={ history }>
-        <Meals />
+        <Recipes />
       </Router>,
     );
     const profile = screen.getByTestId(profileId);
@@ -73,7 +73,7 @@ describe('Testa componente Header', () => {
     const history = createMemoryHistory();
     render(
       <Router history={ history }>
-        <Meals />
+        <Recipes />
       </Router>,
     );
     const search = screen.getByTestId(searchId);
