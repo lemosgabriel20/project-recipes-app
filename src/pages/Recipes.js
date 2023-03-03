@@ -13,6 +13,7 @@ export default function Recipes() {
   const image = (token.includes('meals')) ? 'strMealThumb' : 'strDrinkThumb';
   const name = (token.includes('meals')) ? 'strMeal' : 'strDrink';
   const web = (token.includes('meals')) ? 'themealdb' : 'thecocktaildb';
+
   useEffect(() => {
     const fetchFoods = async () => {
       const response = await fetch(`https://www.${web}.com/api/json/v1/1/search.php?s=`);
@@ -31,6 +32,19 @@ export default function Recipes() {
     fetchCategories();
   }, [token, web]);
 
+  const handleFilter = (category) => {
+    console.log(category);
+    let url = `https://www.${web}.com/api/json/v1/1/filter.php?c=${category}`;
+    if (category === 'All') url = `https://www.${web}.com/api/json/v1/1/search.php?s=`;
+    const fetchFoods = async () => {
+      const response = await fetch(url);
+      const data = await response.json();
+      const limit = 12;
+      setLoadRecipes(data[token].slice(0, limit));
+    };
+    fetchFoods();
+  };
+
   const genericRecipes = (recipesSrc.length) ? recipesSrc : loadRecipes;
   return (
     <div>
@@ -43,7 +57,9 @@ export default function Recipes() {
             return (
               <button
                 key={ key }
+                value={ category.strCategory }
                 data-testid={ `${category.strCategory}-category-filter` }
+                onClick={ () => handleFilter(category.strCategory) }
               >
                 {category.strCategory}
               </button>
@@ -51,6 +67,13 @@ export default function Recipes() {
           })
         ) : null
       }
+      <button
+        data-testid="All-category-filter"
+        value="All"
+        onClick={ () => handleFilter('All') }
+      >
+        All
+      </button>
       { /* Foods */ }
       { genericRecipes.length ? (
         genericRecipes.map((recipe, index) => {
