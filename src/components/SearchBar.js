@@ -1,20 +1,40 @@
 import React, { useState } from 'react';
+import { useLocation } from 'react-router-dom';
 
 export default function SearchBar() {
   const [search, setSearch] = useState('');
   const [endpoint, setEndpoint] = useState('');
+  const location = useLocation();
+  const { pathname } = location;
 
   const checkEndpoint = () => {
-    if (endpoint === 'ingredient') return `https://www.themealdb.com/api/json/v1/1/filter.php?i=${search}`;
-    if (endpoint === 'name') return `https://www.themealdb.com/api/json/v1/1/search.php?s=${search}`;
-    if (endpoint === 'letter') return `https://www.themealdb.com/api/json/v1/1/search.php?f=${search}`;
+    // if meals
+    if (pathname === '/meals') {
+      if (endpoint === 'ingredient') return [`https://www.themealdb.com/api/json/v1/1/filter.php?i=${search}`, 'meals'];
+      if (endpoint === 'name') return [`https://www.themealdb.com/api/json/v1/1/search.php?s=${search}`, 'meals'];
+      if (endpoint === 'letter') return [`https://www.themealdb.com/api/json/v1/1/search.php?f=${search}`, 'meals'];
+    }
+    // if drinks
+    if (pathname === '/drinks') {
+      if (endpoint === 'ingredient') return [`https://www.thecocktaildb.com/api/json/v1/1/filter.php?i=${search}`, 'drinks'];
+      if (endpoint === 'name') return [`https://www.thecocktaildb.com/api/json/v1/1/search.php?s=${search}`, 'drinks'];
+      if (endpoint === 'letter') return [`https://www.thecocktaildb.com/api/json/v1/1/search.php?f=${search}`, 'drinks'];
+    }
   };
 
-  const fetchApi = async () => {
-    const url = checkEndpoint();
+  const fetchApi = async (url, key) => {
     const response = await fetch(url);
     const data = await response.json();
-    console.log(data.meals);
+    console.log(data[key]);
+  };
+
+  const handleSearch = () => {
+    const [url, key] = checkEndpoint();
+    if (endpoint === 'letter' && search.length > 1) {
+      global.alert('Your search must have only 1 (one) character');
+    } else {
+      fetchApi(url, key);
+    }
   };
 
   return (
@@ -57,12 +77,7 @@ export default function SearchBar() {
       <button
         data-testid="exec-search-btn"
         disabled={ endpoint === '' }
-        onClick={ () => {
-          if (endpoint === 'letter' && search.length > 1) {
-            global.alert('Your search must have only 1 (one) character');
-          }
-          fetchApi();
-        } }
+        onClick={ () => handleSearch() }
       >
         Search
       </button>

@@ -10,7 +10,7 @@ const profileId = 'profile-top-btn';
 const searchId = 'search-top-btn';
 const titleId = 'page-title';
 
-describe('Testa tela de Header', () => {
+describe('Testa componente Header', () => {
   test('Testa se elementos existem na tela de Header', () => {
     const history = createMemoryHistory();
     render(
