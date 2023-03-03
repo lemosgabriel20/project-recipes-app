@@ -7,6 +7,7 @@ import RecipesContext from '../context/RecipeContext';
 export default function Recipes() {
   const { recipesSrc } = useContext(RecipesContext);
   const [loadRecipes, setLoadRecipes] = useState([]);
+  const [activeFilter, setActiveFilter] = useState([]);
   const [categories, setCategories] = useState([]);
   const { pathname } = useLocation();
   const token = pathname.slice(1);
@@ -33,9 +34,10 @@ export default function Recipes() {
   }, [token, web]);
 
   const handleFilter = (category) => {
+    setActiveFilter(category);
     console.log(category);
     let url = `https://www.${web}.com/api/json/v1/1/filter.php?c=${category}`;
-    if (category === 'All') url = `https://www.${web}.com/api/json/v1/1/search.php?s=`;
+    if (category === 'All' || category === activeFilter) url = `https://www.${web}.com/api/json/v1/1/search.php?s=`;
     const fetchFoods = async () => {
       const response = await fetch(url);
       const data = await response.json();
