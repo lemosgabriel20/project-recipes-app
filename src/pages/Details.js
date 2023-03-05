@@ -5,11 +5,14 @@ export default function Details() {
   const [recipe, setRecipe] = useState(null);
   const [ingredients, setIngredients] = useState([]);
   const [measures, setMeasures] = useState([]);
+  const [recomendations, setRecomendations] = useState([]);
   const { pathname } = useLocation();
   const params = pathname.slice(1).split('/');
   const token = params[0];
   const id = params[1];
   const web = (token.includes('meals')) ? 'themealdb' : 'thecocktaildb';
+  const webRec = (token.includes('meals')) ? 'thecocktaildb' : 'themealdb';
+  const keyRec = (token.includes('meals')) ? 'drinks' : 'meals';
   const image = (token.includes('meals')) ? 'strMealThumb' : 'strDrinkThumb';
   const name = (token.includes('meals')) ? 'strMeal' : 'strDrink';
   const category = (token.includes('meals')) ? 'strCategory' : 'strAlcoholic';
@@ -24,6 +27,17 @@ export default function Details() {
     };
     fetchById();
   }, [id, token, web]);
+
+  useEffect(() => {
+    const fetchRecomendation = async () => {
+      const response = await fetch(`https://www.${webRec}.com/api/json/v1/1/search.php?s=`);
+      const data = await response.json();
+      console.log(data[keyRec][0]);
+      setRecomendations(data[keyRec][0]);
+      console.log(recomendations);
+    };
+    fetchRecomendation();
+  }, [keyRec, webRec, token, recomendations]);
 
   useEffect(() => {
     if (recipe) {
