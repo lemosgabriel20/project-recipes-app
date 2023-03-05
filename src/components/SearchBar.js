@@ -17,16 +17,11 @@ export default function SearchBar() {
     if (pathname === '/meals') {
       if (endpoint === 'ingredient') return [`https://www.themealdb.com/api/json/v1/1/filter.php?i=${search}`, 'meals'];
       if (endpoint === 'name') return [`https://www.themealdb.com/api/json/v1/1/search.php?s=${search}`, 'meals'];
-      if (endpoint === 'letter') return [`https://www.themealdb.com/api/json/v1/1/search.php?f=${search}`, 'meals'];
+      return [`https://www.themealdb.com/api/json/v1/1/search.php?f=${search}`, 'meals'];
     }
-    // if drinks
-    if (pathname === '/drinks') {
-      if (endpoint === 'ingredient') return [`https://www.thecocktaildb.com/api/json/v1/1/filter.php?i=${search}`, 'drinks'];
-      if (endpoint === 'name') return [`https://www.thecocktaildb.com/api/json/v1/1/search.php?s=${search}`, 'drinks'];
-      if (endpoint === 'letter') return [`https://www.thecocktaildb.com/api/json/v1/1/search.php?f=${search}`, 'drinks'];
-    }
-
-    return ['', ''];
+    if (endpoint === 'ingredient') return [`https://www.thecocktaildb.com/api/json/v1/1/filter.php?i=${search}`, 'drinks'];
+    if (endpoint === 'name') return [`https://www.thecocktaildb.com/api/json/v1/1/search.php?s=${search}`, 'drinks'];
+    return [`https://www.thecocktaildb.com/api/json/v1/1/search.php?f=${search}`, 'drinks'];
   };
 
   const fetchApi = async (url, key) => {
