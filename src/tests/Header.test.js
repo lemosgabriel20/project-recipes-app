@@ -10,15 +10,8 @@ const profileId = 'profile-top-btn';
 const searchId = 'search-top-btn';
 const titleId = 'page-title';
 
-let container;
-beforeEach(() => {
-  container = document.createElement('div');
-  document.body.appendChild(container);
-});
-
 afterEach(() => {
-  document.body.removeChild(container);
-  container = null;
+  window.history.pushState({}, '', '/');
 });
 
 describe('Testa componente Header', () => {
@@ -29,12 +22,9 @@ describe('Testa componente Header', () => {
         <Header />
       </Router>,
     );
-    const profile = screen.getByTestId(profileId);
-    const search = screen.getByTestId(searchId);
-    const title = screen.getByTestId(titleId);
-    expect(profile).toBeInTheDocument();
-    expect(search).toBeInTheDocument();
-    expect(title).toBeInTheDocument();
+    expect(screen.getByTestId(profileId)).toBeInTheDocument();
+    expect(screen.getByTestId(searchId)).toBeInTheDocument();
+    expect(screen.getByTestId(titleId)).toBeInTheDocument();
   });
   test('Testa click do botão profile', () => {
     const history = createMemoryHistory();
@@ -43,8 +33,7 @@ describe('Testa componente Header', () => {
         <Header />
       </Router>,
     );
-    const profile = screen.getByTestId(profileId);
-    userEvent.click(profile);
+    userEvent.click(screen.getByTestId(profileId));
   });
   test('Testa click do botão de abrir pesquisa', () => {
     const history = createMemoryHistory();
@@ -54,7 +43,7 @@ describe('Testa componente Header', () => {
           <Router history={ history }>
             <App />
           </Router>
-        ), container,
+        ),
       );
     });
     userEvent.type(screen.getByTestId('email-input'), 'email@mail.com');
@@ -63,5 +52,22 @@ describe('Testa componente Header', () => {
 
     userEvent.click(screen.getByTestId('search-top-btn'));
     userEvent.type(screen.getByTestId('search-input'), 'A');
+  });
+  test('Testa click do botão de abrir pesquisa', async () => {
+    const history = createMemoryHistory();
+    act(() => {
+      render(
+        (
+          <Router history={ history }>
+            <App />
+          </Router>
+        ),
+      );
+    });
+    userEvent.type(screen.getByTestId('email-input'), 'email@mail.com');
+    userEvent.type(screen.getByTestId('password-input'), '1234567');
+    userEvent.click(screen.getByTestId('login-submit-btn'));
+    userEvent.click(screen.getByTestId('profile-top-btn'));
+    userEvent.click(screen.getByTestId('profile-done-btn'));
   });
 });
