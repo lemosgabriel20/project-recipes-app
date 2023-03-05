@@ -133,6 +133,12 @@ export default function Details() {
             })
           }
         </Carousel>
+        <button
+          style={ { position: 'fixed', bottom: '0px' } }
+          data-testid="start-recipe-btn"
+        >
+          Start Recipe
+        </button>
       </div>
     );
   }
