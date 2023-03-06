@@ -3,11 +3,13 @@ import 'bootstrap/dist/css/bootstrap.css';
 import Carousel from 'react-bootstrap/Carousel';
 import { useLocation } from 'react-router-dom';
 
-export default function Details() {
+export default function RecipeDetails() {
   const [recipe, setRecipe] = useState(null);
   const [ingredients, setIngredients] = useState([]);
   const [measures, setMeasures] = useState([]);
   const [recomendations, setRecomendations] = useState(null);
+  const [drinks, setDrinks] = useState({});
+  const [meals, setMeals] = useState({});
   const { pathname } = useLocation();
   const params = pathname.slice(1).split('/');
   const token = params[0];
@@ -26,6 +28,32 @@ export default function Details() {
   // Criei essa array de números para parar com erros de 'magic number' do linter
   const n = [];
   for (let i = 0; i <= nine; i += 1) n.push(i);
+
+  const startRecipe = () => {
+    if (token === 'meals') setMeals({ ...meals, [id]: ingredients });
+    else setDrinks({ ...drinks, [id]: ingredients });
+  };
+
+  useEffect(() => {
+    if (localStorage.getItem('inProgressRecipes') !== null) {
+      const obj = JSON.parse(localStorage.getItem('inProgressRecipes'));
+      setDrinks(obj.drinks);
+      setMeals(obj.meals);
+    }
+  }, []);
+
+  useEffect(() => {
+    const obj = {
+      drinks: {
+        ...drinks,
+      },
+      meals: {
+        ...meals,
+      },
+    };
+    localStorage.setItem('inProgressRecipes', JSON.stringify(obj));
+  }, [drinks, meals]);
+
   useEffect(() => {
     const fetchById = async () => {
       const response = await fetch(`https://www.${web}.com/api/json/v1/1/lookup.php?i=${id}`);
@@ -133,12 +161,23 @@ export default function Details() {
             })
           }
         </Carousel>
-        <button
-          style={ { position: 'fixed', bottom: '0px' } }
-          data-testid="start-recipe-btn"
-        >
-          Start Recipe
-        </button>
+        {
+          !Object.keys(token === 'meals' ? meals : drinks).includes(id) ? (
+            <button
+              style={ { position: 'fixed', bottom: '0px' } }
+              data-testid="start-recipe-btn"
+              onClick={ () => startRecipe() }
+            >
+              Start Recipe
+            </button>)
+            : (
+              <button
+                style={ { position: 'fixed', bottom: '0px' } }
+                data-testid="start-recipe-btn"
+              >
+                Continue Recipe
+              </button>)
+        }
       </div>
     );
   }

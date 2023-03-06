@@ -7,7 +7,7 @@ import Recipes from './pages/Recipes';
 import Profile from './pages/Profile';
 import DoneRecipes from './pages/DoneRecipes';
 import FavoriteRecipes from './pages/FavoriteRecipes';
-import Details from './pages/Details';
+import RecipeDetails from './pages/RecipeDetails';
 import RecipeProvider from './context/RecipeProvider';
 
 function App() {
@@ -22,13 +22,13 @@ function App() {
             <Recipes />
           </Route>
           <Route path="/meals/:id">
-            <Details />
+            <RecipeDetails />
           </Route>
           <Route exact path="/drinks">
             <Recipes />
           </Route>
           <Route path="/drinks/:id">
-            <Details />
+            <RecipeDetails />
           </Route>
           <Route exact path="/profile">
             <Profile />
