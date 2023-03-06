@@ -9,6 +9,7 @@ import DoneRecipes from './pages/DoneRecipes';
 import FavoriteRecipes from './pages/FavoriteRecipes';
 import RecipeDetails from './pages/RecipeDetails';
 import RecipeProvider from './context/RecipeProvider';
+import RecipeInProgress from './pages/RecipeInProgress';
 
 function App() {
   return (
@@ -21,14 +22,20 @@ function App() {
           <Route exact path="/meals">
             <Recipes />
           </Route>
-          <Route path="/meals/:id">
+          <Route exact path="/meals/:id">
             <RecipeDetails />
+          </Route>
+          <Route exact path="/meals/:id/in-progress">
+            <RecipeInProgress />
           </Route>
           <Route exact path="/drinks">
             <Recipes />
           </Route>
-          <Route path="/drinks/:id">
+          <Route exact path="/drinks/:id">
             <RecipeDetails />
+          </Route>
+          <Route exact path="/drinks/:id/in-progress">
+            <RecipeInProgress />
           </Route>
           <Route exact path="/profile">
             <Profile />

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.css';
 import Carousel from 'react-bootstrap/Carousel';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useHistory } from 'react-router-dom';
 
 export default function RecipeDetails() {
   const [recipe, setRecipe] = useState(null);
@@ -11,6 +11,7 @@ export default function RecipeDetails() {
   const [drinks, setDrinks] = useState({});
   const [meals, setMeals] = useState({});
   const { pathname } = useLocation();
+  const history = useHistory();
   const params = pathname.slice(1).split('/');
   const token = params[0];
   const id = params[1];
@@ -32,6 +33,7 @@ export default function RecipeDetails() {
   const startRecipe = () => {
     if (token === 'meals') setMeals({ ...meals, [id]: ingredients });
     else setDrinks({ ...drinks, [id]: ingredients });
+    history.push(`/${token}/${id}/in-progress`);
   };
 
   useEffect(() => {
@@ -164,7 +166,7 @@ export default function RecipeDetails() {
         {
           !Object.keys(token === 'meals' ? meals : drinks).includes(id) ? (
             <button
-              style={ { position: 'fixed', bottom: '0px' } }
+              style={ { position: 'fixed', bottom: '0px', zIndex: '999' } }
               data-testid="start-recipe-btn"
               onClick={ () => startRecipe() }
             >
@@ -172,7 +174,7 @@ export default function RecipeDetails() {
             </button>)
             : (
               <button
-                style={ { position: 'fixed', bottom: '0px' } }
+                style={ { position: 'fixed', bottom: '0px', zIndex: '999' } }
                 data-testid="start-recipe-btn"
               >
                 Continue Recipe
