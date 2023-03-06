@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import copy from 'clipboard-copy';
 import 'bootstrap/dist/css/bootstrap.css';
 import Carousel from 'react-bootstrap/Carousel';
 import { useLocation, useHistory } from 'react-router-dom';
 import FooterDetails from '../components/FooterDetails';
+import { setInformations } from '../helpers/setInformations';
+import whiteHeartIcon from '../images/whiteHeartIcon.svg';
+import blackHeartIcon from '../images/blackHeartIcon.svg';
 
 export default function RecipeDetails() {
   const [recipe, setRecipe] = useState(null);
@@ -12,27 +14,14 @@ export default function RecipeDetails() {
   const [recomendations, setRecomendations] = useState(null);
   const [drinks, setDrinks] = useState({});
   const [meals, setMeals] = useState({});
-  const [faveValue, setFavorite] = useState();
+  const [storage, setStorage] = useState(false);
+  const [icon, setIcon] = useState(whiteHeartIcon);
+  const [favorites, setFavorites] = useState([]);
   const [shareActive, setShareActive] = useState(false);
   const { pathname } = useLocation();
   const history = useHistory();
-  const params = pathname.slice(1).split('/');
-  const token = params[0];
-  const id = params[1];
-  const web = (token.includes('meals')) ? 'themealdb' : 'thecocktaildb';
-  const webRec = (token.includes('meals')) ? 'thecocktaildb' : 'themealdb';
-  const keyRec = (token.includes('meals')) ? 'drinks' : 'meals';
-  const image = (token.includes('meals')) ? 'strMealThumb' : 'strDrinkThumb';
-  const imageRec = (token.includes('meals')) ? 'strDrinkThumb' : 'strMealThumb';
-  const name = (token.includes('meals')) ? 'strMeal' : 'strDrink';
-  const nameRec = (token.includes('meals')) ? 'strDrink' : 'strMeal';
-  const category = (token.includes('meals')) ? 'strCategory' : 'strAlcoholic';
-  const instructions = 'strInstructions';
-  const youtube = 'strYoutube';
-  const nine = 9;
-  // Criei essa array de números para parar com erros de 'magic number' do linter
-  const n = [];
-  for (let i = 0; i <= nine; i += 1) n.push(i);
+  const [token, id, web, webRec, keyRec, image, imageRec,
+    name, nameRec, category, instructions, youtube, n] = setInformations(pathname);
 
   const startRecipe = () => {
     if (token === 'meals') setMeals({ ...meals, [id]: ingredients });
@@ -41,8 +30,8 @@ export default function RecipeDetails() {
   };
 
   const favorite = () => {
-    console.log(recipe);
-    setFavorite({
+    const string = JSON.stringify(favorites);
+    const obj = {
       id,
       type: (token === 'meals') ? 'meal' : 'drink',
       nationality: recipe.strArea || '',
@@ -50,12 +39,28 @@ export default function RecipeDetails() {
       alcoholicOrNot: recipe.strAlcoholic || '',
       name: recipe[name],
       image: recipe[image],
-    });
+    };
+    if (!string.includes(id)) {
+      setFavorites([...favorites, obj]);
+      setStorage(true);
+    } else {
+      const result = favorites.filter((rec) => rec.id !== id);
+      setFavorites(result);
+      setStorage(true);
+    }
   };
+
+  useEffect(() => {
+    if (storage) {
+      localStorage.setItem('favoriteRecipes', JSON.stringify(favorites));
+      setStorage(false);
+    }
+  }, [storage, favorites]);
 
   const share = () => {
     const time = 2000;
-    copy(`http://localhost:3000${history.location.pathname}`);
+    const text = `http://localhost:3000${history.location.pathname}`;
+    navigator.clipboard.writeText(text);
     setShareActive(true);
     setTimeout(() => setShareActive(false), time);
   };
@@ -67,10 +72,19 @@ export default function RecipeDetails() {
       setMeals(obj.meals);
     }
     // iniciar favorite
-    if (localStorage.getItem('favoriteRecipes') === null) {
-      localStorage.setItem('favoriteRecipes', '[]');
-    }
+    if (localStorage.getItem('favoriteRecipes') !== null) {
+      const list = JSON.parse(localStorage.getItem('favoriteRecipes'));
+      setFavorites(list);
+    } else localStorage.setItem('favoriteRecipes', '[]');
   }, []);
+
+  useEffect(() => {
+    if (favorites !== undefined) {
+      const string = JSON.stringify(favorites);
+      if (string.includes(id)) setIcon(blackHeartIcon);
+      else setIcon(whiteHeartIcon);
+    }
+  }, [favorites, id]);
 
   useEffect(() => {
     const obj = {
@@ -83,19 +97,6 @@ export default function RecipeDetails() {
     };
     localStorage.setItem('inProgressRecipes', JSON.stringify(obj));
   }, [drinks, meals]);
-
-  useEffect(() => {
-    if (faveValue) {
-      const list = JSON.parse(localStorage.getItem('favoriteRecipes'));
-      const newList = [...list, faveValue];
-      if (JSON.stringify(faveValue) === JSON.stringify(list[list.length - 1])) {
-        const removedList = newList.filter((rec) => rec.id !== faveValue.id);
-        localStorage.setItem('favoriteRecipes', JSON.stringify(removedList));
-      } else {
-        localStorage.setItem('favoriteRecipes', JSON.stringify(newList));
-      }
-    }
-  }, [faveValue]);
 
   useEffect(() => {
     const fetchById = async () => {
@@ -113,7 +114,6 @@ export default function RecipeDetails() {
       const limit = 6;
       const dataFormatted = data[keyRec].slice(0, limit);
       const result = dataFormatted.map((val) => [val[nameRec], val[imageRec]]);
-      console.log(result);
       setRecomendations(result);
     };
     fetchRecomendation();
@@ -162,6 +162,7 @@ export default function RecipeDetails() {
           share={ share }
           startRecipe={ startRecipe }
           favorite={ favorite }
+          icon={ icon }
         />
         <img width="200px" data-testid="recipe-photo" src={ recipe[image] } alt="" />
         { shareActive ? <p>Link copied!</p> : null }
@@ -217,4 +218,5 @@ export default function RecipeDetails() {
       </div>
     );
   }
+  return null;
 }

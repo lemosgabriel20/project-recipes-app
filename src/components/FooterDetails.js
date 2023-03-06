@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 export default function FooterDetails({ token, meals, drinks, id, share, startRecipe,
-  favorite }) {
+  favorite, icon }) {
   return (
     <div>
       {
@@ -29,6 +29,7 @@ export default function FooterDetails({ token, meals, drinks, id, share, startRe
         Share
       </button>
       <button
+        src={ icon }
         data-testid="favorite-btn"
         onClick={ () => favorite() }
       >
