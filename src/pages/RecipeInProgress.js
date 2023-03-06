@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
+import whiteHeartIcon from '../images/whiteHeartIcon.svg';
+import blackHeartIcon from '../images/blackHeartIcon.svg';
 
 export default function RecipeInProgress() {
   // pegar as infos do localstorage
@@ -8,6 +10,10 @@ export default function RecipeInProgress() {
   const [recipe, setRecipe] = useState(null);
   const [ingredients, setIngredients] = useState([]);
   const [ingredientClass, setClass] = useState([]);
+  const [shareActive, setShareActive] = useState(false);
+  const [storage, setStorage] = useState(false);
+  const [icon, setIcon] = useState(whiteHeartIcon);
+  const [favorites, setFavorites] = useState([]);
   const { pathname } = useLocation();
   const history = useHistory();
   const params = pathname.slice(1).split('/');
@@ -17,6 +23,25 @@ export default function RecipeInProgress() {
   const image = (token.includes('meals')) ? 'strMealThumb' : 'strDrinkThumb';
   const name = (token.includes('meals')) ? 'strMeal' : 'strDrink';
   const category = (token.includes('meals')) ? 'strCategory' : 'strAlcoholic';
+
+  useEffect(() => {
+    if (localStorage.getItem('strike') === null) {
+      localStorage.setItem('strike', '[]');
+    } else {
+      const obj = JSON.parse(localStorage.getItem('strike'));
+      const found = obj.find((item) => item.id === id);
+      if (found) {
+        setClass(found.strike);
+      }
+    }
+  }, [id]);
+
+  useEffect(() => {
+    if (localStorage.getItem('favoriteRecipes') !== null) {
+      const list = JSON.parse(localStorage.getItem('favoriteRecipes'));
+      setFavorites(list);
+    } else localStorage.setItem('favoriteRecipes', '[]');
+  }, []);
 
   useEffect(() => {
     const fetchApi = async () => {
@@ -30,22 +55,62 @@ export default function RecipeInProgress() {
         }
         return '';
       });
-      console.log(ingredientsResult);
       setRecipe(data[token][0]);
       setIngredients(ingredientsResult);
-      const newClass = ingredientsResult.map(() => '');
-      setClass(newClass);
+      const obj = JSON.parse(localStorage.getItem('strike'));
+      const found = obj.find((item) => item.id === id);
+      if (found === undefined) {
+        const newClass = ingredientsResult.map(() => '');
+        setClass(newClass);
+      }
     };
 
     fetchApi();
   }, [id, web, token]);
 
+  useEffect(() => {
+    if (storage) {
+      localStorage.setItem('favoriteRecipes', JSON.stringify(favorites));
+      setStorage(false);
+    }
+  }, [storage, favorites]);
+
+  useEffect(() => {
+    if (favorites !== undefined) {
+      const string = JSON.stringify(favorites);
+      if (string.includes(id)) setIcon(blackHeartIcon);
+      else setIcon(whiteHeartIcon);
+    }
+  }, [favorites, id]);
+
+  const favorite = () => {
+    const string = JSON.stringify(favorites);
+    const obj = {
+      id,
+      type: (token === 'meals') ? 'meal' : 'drink',
+      nationality: recipe.strArea || '',
+      category: recipe.strCategory || '',
+      alcoholicOrNot: recipe.strAlcoholic || '',
+      name: recipe[name],
+      image: recipe[image],
+    };
+    if (!string.includes(id)) {
+      setFavorites([...favorites, obj]);
+      setStorage(true);
+    } else {
+      const result = favorites.filter((rec) => rec.id !== id);
+      setFavorites(result);
+      setStorage(true);
+    }
+  };
+
   const share = () => {
-    // const time = 2000;
-    const text = `http://localhost:3000${history.location.pathname}`;
+    const time = 2000;
+    const sliceVal = -12;
+    const text = `http://localhost:3000${history.location.pathname.slice(0, sliceVal)}`;
     navigator.clipboard.writeText(text);
-    // setShareActive(true);
-    // setTimeout(() => setShareActive(false), time);
+    setShareActive(true);
+    setTimeout(() => setShareActive(false), time);
   };
 
   const finishRecipe = () => {
@@ -53,11 +118,27 @@ export default function RecipeInProgress() {
   };
 
   const updateClass = (index) => {
+    const load = JSON.parse(localStorage.getItem('strike'));
     const classes = [...ingredientClass];
-    console.log(classes);
     classes[index] = (classes[index] === '') ? 'strike' : '';
     const newClass = [...classes];
     setClass(newClass);
+    const list = { id, strike: newClass };
+    if (JSON.stringify(load).includes(`"id":"${id}"`)) {
+      const obj = [
+        ...load,
+      ];
+      const found = obj.find((item) => item.id === id);
+      const foundIdx = (obj.indexOf(found));
+      obj[foundIdx] = list;
+      localStorage.setItem('strike', JSON.stringify(obj));
+    } else {
+      const obj = [
+        ...load,
+        list,
+      ];
+      localStorage.setItem('strike', JSON.stringify(obj));
+    }
   };
 
   if (recipe && ingredients.length > 0) {
@@ -72,6 +153,8 @@ export default function RecipeInProgress() {
           </button>
           <button
             data-testid="favorite-btn"
+            src={ icon }
+            onClick={ () => favorite() }
           >
             Favorite
           </button>
@@ -81,6 +164,7 @@ export default function RecipeInProgress() {
             alt=""
             width="200px"
           />
+          { shareActive ? <p>Link copied!</p> : null }
           <h1 data-testid="recipe-title">{ recipe[name] }</h1>
           <h3 data-testid="recipe-category">{ recipe[category] }</h3>
           {
@@ -95,6 +179,7 @@ export default function RecipeInProgress() {
                     <input
                       type="checkbox"
                       name="ingredient"
+                      defaultChecked={ (ingredientClass[index] === 'strike') }
                       onClick={ () => updateClass(index) }
                       value={ ingredient }
                     />
@@ -110,7 +195,7 @@ export default function RecipeInProgress() {
           style={ { position: 'fixed', bottom: '0px', zIndex: '999' } }
           data-testid="finish-recipe-btn"
           onClick={ () => finishRecipe() }
-          disabled
+          disabled={ ingredientClass.includes('') }
         >
           Finish Recipe
         </button>
