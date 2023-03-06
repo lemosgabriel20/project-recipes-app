@@ -1,38 +1,52 @@
 import React from 'react';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { BrowserRouter, Route } from 'react-router-dom';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Login from './pages/Login';
-import Meals from './pages/Meals';
-import Drinks from './pages/Drinks';
+import Recipes from './pages/Recipes';
 import Profile from './pages/Profile';
 import DoneRecipes from './pages/DoneRecipes';
 import FavoriteRecipes from './pages/FavoriteRecipes';
+import RecipeDetails from './pages/RecipeDetails';
+import RecipeProvider from './context/RecipeProvider';
+import RecipeInProgress from './pages/RecipeInProgress';
 
 function App() {
   return (
     <div>
       <BrowserRouter>
-        <Switch>
+        <RecipeProvider>
           <Route exact path="/">
             <Login />
           </Route>
-          <Route path="/meals">
-            <Meals />
+          <Route exact path="/meals">
+            <Recipes />
           </Route>
-          <Route path="/drinks">
-            <Drinks />
+          <Route exact path="/meals/:id">
+            <RecipeDetails />
           </Route>
-          <Route path="/profile">
+          <Route exact path="/meals/:id/in-progress">
+            <RecipeInProgress />
+          </Route>
+          <Route exact path="/drinks">
+            <Recipes />
+          </Route>
+          <Route exact path="/drinks/:id">
+            <RecipeDetails />
+          </Route>
+          <Route exact path="/drinks/:id/in-progress">
+            <RecipeInProgress />
+          </Route>
+          <Route exact path="/profile">
             <Profile />
           </Route>
-          <Route path="/done-recipes">
+          <Route exact path="/done-recipes">
             <DoneRecipes />
           </Route>
-          <Route path="/favorite-recipes">
+          <Route exact path="/favorite-recipes">
             <FavoriteRecipes />
           </Route>
-        </Switch>
+        </RecipeProvider>
       </BrowserRouter>
     </div>
   );

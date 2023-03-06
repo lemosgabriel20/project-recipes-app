@@ -37,7 +37,7 @@ export default function Header() {
       </button>
       { !pathname.includes('profile') && !pathname.includes('done-recipes')
         && !pathname.includes('favorite-recipes') ? (
-          <button onClick={ () => setSearchActive(!searchActive) }>
+          <button data-testid="ola" onClick={ () => setSearchActive(!searchActive) }>
             <img data-testid="search-top-btn" src={ searchIcon } alt="Search" />
           </button>) : null}
       { searchActive ? (
