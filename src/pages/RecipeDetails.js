@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
+import copy from 'clipboard-copy';
 import 'bootstrap/dist/css/bootstrap.css';
 import Carousel from 'react-bootstrap/Carousel';
 import { useLocation, useHistory } from 'react-router-dom';
+import FooterDetails from '../components/FooterDetails';
 
 export default function RecipeDetails() {
   const [recipe, setRecipe] = useState(null);
@@ -10,6 +12,7 @@ export default function RecipeDetails() {
   const [recomendations, setRecomendations] = useState(null);
   const [drinks, setDrinks] = useState({});
   const [meals, setMeals] = useState({});
+  const [shareActive, setShareActive] = useState(false);
   const { pathname } = useLocation();
   const history = useHistory();
   const params = pathname.slice(1).split('/');
@@ -34,6 +37,13 @@ export default function RecipeDetails() {
     if (token === 'meals') setMeals({ ...meals, [id]: ingredients });
     else setDrinks({ ...drinks, [id]: ingredients });
     history.push(`/${token}/${id}/in-progress`);
+  };
+
+  const share = () => {
+    const time = 2000;
+    copy(`http://localhost:3000${history.location.pathname}`);
+    setShareActive(true);
+    setTimeout(() => setShareActive(false), time);
   };
 
   useEffect(() => {
@@ -113,7 +123,16 @@ export default function RecipeDetails() {
     const newRec = [recFirst, recSec, recThird];
     return (
       <div>
+        <FooterDetails
+          token={ token }
+          meals={ meals }
+          drinks={ drinks }
+          id={ id }
+          share={ share }
+          startRecipe={ startRecipe }
+        />
         <img width="200px" data-testid="recipe-photo" src={ recipe[image] } alt="" />
+        { shareActive ? <p>Link copied!</p> : null }
         <h1 data-testid="recipe-title">{ recipe[name] }</h1>
         <h4 data-testid="recipe-category">{ recipe[category] }</h4>
         {
@@ -163,23 +182,6 @@ export default function RecipeDetails() {
             })
           }
         </Carousel>
-        {
-          !Object.keys(token === 'meals' ? meals : drinks).includes(id) ? (
-            <button
-              style={ { position: 'fixed', bottom: '0px', zIndex: '999' } }
-              data-testid="start-recipe-btn"
-              onClick={ () => startRecipe() }
-            >
-              Start Recipe
-            </button>)
-            : (
-              <button
-                style={ { position: 'fixed', bottom: '0px', zIndex: '999' } }
-                data-testid="start-recipe-btn"
-              >
-                Continue Recipe
-              </button>)
-        }
       </div>
     );
   }
