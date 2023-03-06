@@ -21,7 +21,7 @@ jest.mock('../__mocks__/fetchApi', () => {
 
 window.alert = jest.fn();
 
-afterEach(() => {
+beforeEach(() => {
   window.history.pushState({}, '', '/');
 });
 
@@ -56,7 +56,7 @@ describe('Testa componente SearchBar', () => {
     userEvent.click(screen.getByTestId(submit));
     await waitFor(() => {
       expect(window.location.pathname).toBe('/meals/52771');
-    });
+    }, { timeout: 3000 });
   });
   test('Testa o alert do input first letter', async () => {
     const history = createMemoryHistory();

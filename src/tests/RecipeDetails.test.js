@@ -13,7 +13,6 @@ afterEach(() => {
 
 Object.defineProperty(navigator, 'clipboard', {
   value: {
-    // Provide mock implementation
     writeText: jest.fn().mockReturnValueOnce(Promise.resolve(42)),
   },
 });
