@@ -163,6 +163,7 @@ export default function RecipeDetails() {
           startRecipe={ startRecipe }
           favorite={ favorite }
           icon={ icon }
+          history={ history }
         />
         <img width="200px" data-testid="recipe-photo" src={ recipe[image] } alt="" />
         { shareActive ? <p>Link copied!</p> : null }

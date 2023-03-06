@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 export default function FooterDetails({ token, meals, drinks, id, share, startRecipe,
-  favorite, icon }) {
+  favorite, icon, history }) {
   return (
     <div>
       {
@@ -18,6 +18,7 @@ export default function FooterDetails({ token, meals, drinks, id, share, startRe
             <button
               style={ { position: 'fixed', bottom: '0px', zIndex: '999' } }
               data-testid="start-recipe-btn"
+              onClick={ () => history.push(`/${token}/${id}/in-progress`) }
             >
               Continue Recipe
             </button>)
