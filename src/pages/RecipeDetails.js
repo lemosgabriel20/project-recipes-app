@@ -12,6 +12,7 @@ export default function RecipeDetails() {
   const [recomendations, setRecomendations] = useState(null);
   const [drinks, setDrinks] = useState({});
   const [meals, setMeals] = useState({});
+  const [faveValue, setFavorite] = useState();
   const [shareActive, setShareActive] = useState(false);
   const { pathname } = useLocation();
   const history = useHistory();
@@ -36,7 +37,20 @@ export default function RecipeDetails() {
   const startRecipe = () => {
     if (token === 'meals') setMeals({ ...meals, [id]: ingredients });
     else setDrinks({ ...drinks, [id]: ingredients });
-    history.push(`/${token}/${id}/in-progress`);
+    setTimeout(() => history.push(`/${token}/${id}/in-progress`));
+  };
+
+  const favorite = () => {
+    console.log(recipe);
+    setFavorite({
+      id,
+      type: (token === 'meals') ? 'meal' : 'drink',
+      nationality: recipe.strArea || '',
+      category: recipe.strCategory || '',
+      alcoholicOrNot: recipe.strAlcoholic || '',
+      name: recipe[name],
+      image: recipe[image],
+    });
   };
 
   const share = () => {
@@ -52,6 +66,10 @@ export default function RecipeDetails() {
       setDrinks(obj.drinks);
       setMeals(obj.meals);
     }
+    // iniciar favorite
+    if (localStorage.getItem('favoriteRecipes') === null) {
+      localStorage.setItem('favoriteRecipes', '[]');
+    }
   }, []);
 
   useEffect(() => {
@@ -65,6 +83,19 @@ export default function RecipeDetails() {
     };
     localStorage.setItem('inProgressRecipes', JSON.stringify(obj));
   }, [drinks, meals]);
+
+  useEffect(() => {
+    if (faveValue) {
+      const list = JSON.parse(localStorage.getItem('favoriteRecipes'));
+      const newList = [...list, faveValue];
+      if (JSON.stringify(faveValue) === JSON.stringify(list[list.length - 1])) {
+        const removedList = newList.filter((rec) => rec.id !== faveValue.id);
+        localStorage.setItem('favoriteRecipes', JSON.stringify(removedList));
+      } else {
+        localStorage.setItem('favoriteRecipes', JSON.stringify(newList));
+      }
+    }
+  }, [faveValue]);
 
   useEffect(() => {
     const fetchById = async () => {
@@ -130,6 +161,7 @@ export default function RecipeDetails() {
           id={ id }
           share={ share }
           startRecipe={ startRecipe }
+          favorite={ favorite }
         />
         <img width="200px" data-testid="recipe-photo" src={ recipe[image] } alt="" />
         { shareActive ? <p>Link copied!</p> : null }

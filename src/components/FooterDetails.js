@@ -1,7 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-export default function FooterDetails({ token, meals, drinks, id, share, startRecipe }) {
+export default function FooterDetails({ token, meals, drinks, id, share, startRecipe,
+  favorite }) {
   return (
     <div>
       {
@@ -29,6 +30,7 @@ export default function FooterDetails({ token, meals, drinks, id, share, startRe
       </button>
       <button
         data-testid="favorite-btn"
+        onClick={ () => favorite() }
       >
         Favorite
       </button>
