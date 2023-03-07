@@ -12,7 +12,7 @@ export default function DoneRecipes() {
     }
   }, [recipes]);
 
-  if (recipes !== undefined) {
+  if (recipes) {
     return (
       <div>
         <Header />
@@ -31,7 +31,7 @@ export default function DoneRecipes() {
         >
           Drinks
         </button>
-        {
+        { recipes.length > 0 ? (
           recipes.map((recipe, index) => {
             const key = index;
             const tags = [...recipe.tags];
@@ -72,9 +72,9 @@ export default function DoneRecipes() {
                 }
               </div>
             );
-          })
-        }
+          })) : null }
       </div>
     );
   }
+  return <div><Header /></div>;
 }
