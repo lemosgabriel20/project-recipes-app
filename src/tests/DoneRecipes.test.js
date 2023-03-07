@@ -1,9 +1,9 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { Router } from 'react-router-dom';
 import { createMemoryHistory } from 'history';
 import userEvent from '@testing-library/user-event';
-import App from '../App';
+import DoneRecipes from '../pages/DoneRecipes';
 
 Object.defineProperty(navigator, 'clipboard', {
   value: {
@@ -16,22 +16,42 @@ beforeEach(() => {
 });
 
 describe('Testes em DoneRecipes', () => {
-  test('Testa os botões', async () => {
+  test('Testa os botão Drinks', async () => {
     const history = createMemoryHistory();
     render(
       <Router history={ history }>
-        <App />
+        <DoneRecipes />
       </Router>,
     );
-    // acessar conta
-    userEvent.type(screen.getByTestId('email-input'), 'email@mail.com');
-    userEvent.type(screen.getByTestId('password-input'), '12345678');
-    userEvent.click(screen.getByTestId('login-submit-btn'));
     // acessar comida
-    await waitFor(async () => {
-      userEvent.click(screen.getByTestId('0-recipe-card'));
-      console.log(window.location.pathname);
-    });
+
+    userEvent.click(screen.getByTestId('filter-by-drink-btn'));
+    // acessar in progress
+  });
+  test('Testa o botão Meals', async () => {
+    const history = createMemoryHistory();
+    render(
+      <Router history={ history }>
+        <DoneRecipes />
+      </Router>,
+    );
+    // acessar comida
+
+    userEvent.click(screen.getByTestId('filter-by-meal-btn'));
+    expect(screen.getByTestId('0-horizontal-share-btn')).toBeInTheDocument();
+    userEvent.click(screen.getByTestId('0-horizontal-share-btn'));
+    // acessar in progress
+  });
+  test('Testa o botão All', async () => {
+    const history = createMemoryHistory();
+    render(
+      <Router history={ history }>
+        <DoneRecipes />
+      </Router>,
+    );
+    // acessar comida
+
+    userEvent.click(screen.getByTestId('filter-by-all-btn'));
     // acessar in progress
   });
 });

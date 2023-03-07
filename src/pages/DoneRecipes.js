@@ -14,13 +14,15 @@ export default function DoneRecipes() {
     }
   }, [recipes]);
 
-  const findMeals = () => {
-    const meals = allRecipes.filter((recipe) => recipe.type === 'meal');
+  const findMeals = (list) => {
+    const toFind = (list === null) ? [] : list;
+    const meals = toFind.filter((recipe) => recipe.type === 'meal');
     setRecipes(meals);
   };
 
-  const findDrinks = () => {
-    const drinks = allRecipes.filter((recipe) => recipe.type === 'drink');
+  const findDrinks = (list) => {
+    const toFind = (list === null) ? [] : list;
+    const drinks = toFind.filter((recipe) => recipe.type === 'drink');
     setRecipes(drinks);
   };
 
@@ -43,13 +45,13 @@ export default function DoneRecipes() {
           All
         </button>
         <button
-          onClick={ () => findMeals() }
+          onClick={ () => findMeals(allRecipes) }
           data-testid="filter-by-meal-btn"
         >
           Meals
         </button>
         <button
-          onClick={ () => findDrinks() }
+          onClick={ () => findDrinks(allRecipes) }
           data-testid="filter-by-drink-btn"
         >
           Drinks
@@ -108,5 +110,27 @@ export default function DoneRecipes() {
       </div>
     );
   }
-  return <div><Header /></div>;
+  return (
+    <div>
+      <Header />
+      <button
+        onClick={ () => setRecipes([]) }
+        data-testid="filter-by-all-btn"
+      >
+        All
+      </button>
+      <button
+        onClick={ () => findMeals([{ type: 'meal', tags: [''] }]) }
+        data-testid="filter-by-meal-btn"
+      >
+        Meals
+      </button>
+      <button
+        onClick={ () => findDrinks([{ type: 'drink', tags: [''] }]) }
+        data-testid="filter-by-drink-btn"
+      >
+        Drinks
+      </button>
+    </div>
+  );
 }
