@@ -4,6 +4,7 @@ import shareIcon from '../images/shareIcon.svg';
 
 export default function DoneRecipes() {
   const [recipes, setRecipes] = useState(JSON.parse(localStorage.getItem('doneRecipes')));
+  const [shareActive, setShareActive] = useState(false);
 
   useEffect(() => {
     const local = JSON.parse(localStorage.getItem('doneRecipes'));
@@ -12,6 +13,14 @@ export default function DoneRecipes() {
       console.log(recipes);
     }
   }, [recipes]);
+
+  const share = (type, id) => {
+    const time = 2000;
+    const text = `http://localhost:3000/${type}s/${id}`;
+    navigator.clipboard.writeText(text);
+    setShareActive(true);
+    setTimeout(() => setShareActive(false), time);
+  };
 
   if (recipes) {
     return (
@@ -62,9 +71,11 @@ export default function DoneRecipes() {
                 <button
                   src={ shareIcon }
                   data-testid={ `${index}-horizontal-share-btn` }
+                  onClick={ () => share(recipe.type, recipe.id) }
                 >
                   Share
                 </button>
+                { shareActive ? <p>Link copied!</p> : null }
                 {
                   (tags).map((tag, i) => {
                     const k = i;
