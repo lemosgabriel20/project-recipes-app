@@ -4,15 +4,25 @@ import shareIcon from '../images/shareIcon.svg';
 
 export default function DoneRecipes() {
   const [recipes, setRecipes] = useState(JSON.parse(localStorage.getItem('doneRecipes')));
+  const [allRecipes, setAllRecipes] = useState([]);
   const [shareActive, setShareActive] = useState(false);
 
   useEffect(() => {
     const local = JSON.parse(localStorage.getItem('doneRecipes'));
     if (local !== undefined) {
-      setRecipes(recipes);
-      console.log(recipes);
+      setAllRecipes(local);
     }
   }, [recipes]);
+
+  const findMeals = () => {
+    const meals = allRecipes.filter((recipe) => recipe.type === 'meal');
+    setRecipes(meals);
+  };
+
+  const findDrinks = () => {
+    const drinks = allRecipes.filter((recipe) => recipe.type === 'drink');
+    setRecipes(drinks);
+  };
 
   const share = (type, id) => {
     const time = 2000;
@@ -27,16 +37,19 @@ export default function DoneRecipes() {
       <div>
         <Header />
         <button
+          onClick={ () => setRecipes(allRecipes) }
           data-testid="filter-by-all-btn"
         >
           All
         </button>
         <button
+          onClick={ () => findMeals() }
           data-testid="filter-by-meal-btn"
         >
           Meals
         </button>
         <button
+          onClick={ () => findDrinks() }
           data-testid="filter-by-drink-btn"
         >
           Drinks
