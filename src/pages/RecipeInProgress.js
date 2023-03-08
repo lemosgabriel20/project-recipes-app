@@ -25,15 +25,13 @@ export default function RecipeInProgress() {
   const category = (token.includes('meals')) ? 'strCategory' : 'strAlcoholic';
 
   useEffect(() => {
-    if (localStorage.getItem('strike') === null) {
-      localStorage.setItem('strike', '[]');
-    } else {
+    if (localStorage.getItem('strike') !== null) {
       const obj = JSON.parse(localStorage.getItem('strike'));
       const found = obj.find((item) => item.id === id);
       if (found) {
         setClass(found.strike);
       }
-    }
+    } else localStorage.setItem('strike', '[]');
   }, [id]);
 
   useEffect(() => {
@@ -114,7 +112,30 @@ export default function RecipeInProgress() {
   };
 
   const finishRecipe = () => {
-    console.log('finish recipe');
+    if (localStorage.getItem('doneRecipes') === null) {
+      localStorage.setItem('doneRecipes', '[]');
+    }
+    const list = JSON.parse(localStorage.getItem('doneRecipes'));
+    const found = list.find((item) => item.id === id);
+    if (found === undefined) {
+      const obj = {
+        id,
+        type: (token === 'meals') ? 'meal' : 'drink',
+        nationality: recipe.strArea || '',
+        category: recipe.strCategory || '',
+        alcoholicOrNot: recipe.strAlcoholic || '',
+        name: recipe[name],
+        image: recipe[image],
+        doneDate: new Date(),
+        tags: recipe.strTags ? recipe.strTags.split(',') : [],
+      };
+      const newList = [
+        ...list,
+        obj,
+      ];
+      localStorage.setItem('doneRecipes', JSON.stringify(newList));
+    }
+    history.push('/done-recipes');
   };
 
   const updateClass = (index) => {

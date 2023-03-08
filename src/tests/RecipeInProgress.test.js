@@ -12,10 +12,6 @@ jest.mock('../__mocks__/fetchApi', () => {
   };
 });
 
-beforeEach(() => {
-  window.history.pushState({}, '', '/');
-});
-
 Object.defineProperty(navigator, 'clipboard', {
   value: {
     writeText: jest.fn().mockReturnValueOnce(Promise.resolve(42)),
@@ -60,7 +56,16 @@ describe('', () => {
       userEvent.click(screen.getByTestId('share-btn'));
       const ingredient = '0-ingredient-step';
       expect(screen.getByTestId(ingredient)).toBeInTheDocument();
-      userEvent.click(screen.getByTestId(ingredient));
+      userEvent.click(screen.getByTestId('0-ingredient-step'));
+      userEvent.click(screen.getByTestId('1-ingredient-step'));
+      userEvent.click(screen.getByTestId('2-ingredient-step'));
+      userEvent.click(screen.getByTestId('3-ingredient-step'));
+      userEvent.click(screen.getByTestId('4-ingredient-step'));
+      userEvent.click(screen.getByTestId('5-ingredient-step'));
+      userEvent.click(screen.getByTestId('6-ingredient-step'));
+      userEvent.click(screen.getByTestId('7-ingredient-step'));
+
+      userEvent.click(screen.getByTestId('favorite-btn'));
 
       expect(screen.getByTestId('finish-recipe-btn')).toBeInTheDocument();
       userEvent.click(screen.getByTestId('finish-recipe-btn'));
